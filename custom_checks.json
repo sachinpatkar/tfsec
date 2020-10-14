@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "code": "OTRAWS001",
+      "description": "Custom check to ensure the CostCentre tag is applied to EC2 instances",
+      "provider": "aws",
+      "requiredTypes": [
+        "resource"
+      ],
+      "requiredLabels": [
+        "aws_instance"
+      ],
+      "severity": "WARNING",
+      "errorMessage": "The required CostCentre tag was missing",
+      "matcher": {
+        "matchName": "tags",
+        "matchValue": "",
+        "isRequired": true,
+        "type": "attribute",
+        "subMatch": {
+          "matchName": "CostCentrer",
+          "matchValue": "",
+          "checkAction": "isPresent",
+          "type": "key"
+        }
+      }
+    }
+  ]
+}

@@ -48,6 +48,9 @@ github.com/spf13/pflag
 ## explicit
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
+# github.com/tfsec/tfsec/api v0.0.1
+## explicit
+github.com/tfsec/tfsec/api
 # github.com/zclconf/go-cty v1.5.1
 ## explicit
 github.com/zclconf/go-cty/cty
