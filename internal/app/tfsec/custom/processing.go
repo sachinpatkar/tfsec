@@ -2,6 +2,7 @@ package custom
 
 import (
 	"fmt"
+	"github.com/tfsec/tfsec/internal/app/tfsec/debug"
 	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 )
@@ -9,7 +10,7 @@ import (
 func processFoundChecks(checks ChecksFile) {
 	for _, customCheck := range checks.Checks {
 		func(customCheck Check) {
-			fmt.Printf("Loading check: %s\n", customCheck.Code)
+			debug.Log("Loading check: %s\n", customCheck.Code)
 			scanner.RegisterCheck(scanner.Check{
 				Code: customCheck.Code,
 				Documentation: scanner.CheckDocumentation{
