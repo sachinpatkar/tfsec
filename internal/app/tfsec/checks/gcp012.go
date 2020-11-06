@@ -5,7 +5,7 @@ import (
 
 	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
-	"github.com/zclconf/go-cty/cty"
+	_ "github.com/zclconf/go-cty/cty"
 )
 
 const GCPGKENodeServiceAccount scanner.RuleCode = "GCP012"
@@ -45,18 +45,27 @@ func init() {
 		RequiredLabels: []string{"google_container_cluster", "google_container_node_pool"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {
 
-			display_block := block.GetBlock("node_config")
-			service_account := display_block.GetAttribute("service_account")
+			if !block.HasBlock("node_config") {
+				return []scanner.Result{
+					check.NewResult(
+						fmt.Sprintf("Resource '%s' does not define the node config and does not override the default service account. It is recommended to use a minimally privileged service account to run your GKE cluster.", block.FullName()),
+						block.Range(),
+						scanner.SeverityError,
+					),
+				}
+			}
+			displayBlock := block.GetBlock("node_config")
+			serviceAccount := displayBlock.GetAttribute("service_account")
 
-			if service_account == nil || (service_account.Value().Type() != cty.String) || len(service_account.Value().AsString()) == 0 {
-				if display_block == nil {
-					display_block = block
+			if serviceAccount == nil || serviceAccount.IsEmpty() {
+				if displayBlock == nil {
+					displayBlock = block
 				}
 
 				return []scanner.Result{
 					check.NewResult(
 						fmt.Sprintf("Resource '%s' does not override the default service account. It is recommended to use a minimally privileged service account to run your GKE cluster.", block.FullName()),
-						display_block.Range(),
+						displayBlock.Range(),
 						scanner.SeverityError,
 					),
 				}
